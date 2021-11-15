@@ -2,13 +2,13 @@ name: Yarn Install and Test JS
 
 on:
   push:
-    branches: [master]
-    paths:
-      - js/*
-  pull_request:
-    branches: [master]
-    paths:
-      - js/*
+    branches: [master, test-ci]
+#   paths:
+#     - js/*
+# pull_request:
+#   branches: [master]
+#   paths:
+#     - js/*
 
 jobs:
   unit_tests:

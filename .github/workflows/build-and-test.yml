@@ -2,13 +2,13 @@ name: Build and Test Rust Programs
 
 on:
   push:
-    branches: [master]
-    paths:
-      - rust/*
-  pull_request:
-    branches: [master]
-    paths:
-      - rust/*
+    branches: [master, test-ci]
+#   paths:
+#     - rust/*
+# pull_request:
+#   branches: [master]
+#   paths:
+#     - rust/*
 
 env:
   CARGO_TERM_COLOR: always
