@@ -1,4 +1,5 @@
 //! Program entrypoint definitions
+// triggering rust/**
 
 // Just some change to trigger CI
 #![cfg(all(target_arch = "bpf", not(feature = "no-entrypoint")))]
