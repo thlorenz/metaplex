@@ -3,8 +3,8 @@ name: Lint JavaScript
 on:
   push:
     branches: [master, test-ci]
-#   paths:
-#     - js/*
+    paths:
+      - 'js/**'
 # pull_request:
 #   branches: [master]
 #   paths:

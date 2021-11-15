@@ -3,8 +3,8 @@ name: Build and Test Rust Programs
 on:
   push:
     branches: [master, test-ci]
-#   paths:
-#     - rust/*
+    paths:
+      - rust/**
 # pull_request:
 #   branches: [master]
 #   paths:
