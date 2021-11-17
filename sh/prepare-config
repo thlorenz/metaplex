@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const { execSync: exec } = require("child_process");
+const path = require("path");
+const keypairPath = require.resolve("./keypairs/test-creator-keypair.json");
+const configPath = path.join(__dirname, "config.yml");
+const addressLabelsPath = path.join(__dirname, "address-labels.yml");
+
+const config = `---
+json_rpc_url: "http://localhost:8899"
+websocket_url: ""
+keypair_path: ${keypairPath}
+commitment: confirmed
+`;
+
+function main() {
+  fs.writeFileSync(configPath, config, "utf8");
+
+  // Don't see that this makes any difference in the explorer, but still nice to have them setup
+  exec(
+    `solana config -C ${configPath} import-address-labels ${addressLabelsPath}`
+  );
+}
+
+try {
+  main();
+  process.exit(0);
+} catch (err) {
+  console.error(err);
+  process.exit(1);
+}
