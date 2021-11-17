@@ -77,6 +77,13 @@ export const ENDPOINTS: Array<Endpoint> = [
     url: clusterApiUrl('devnet'),
     chainId: ChainId.Devnet,
   },
+  {
+    name: 'localnet',
+    label: 'localnet',
+    url: 'http://localhost:8899/',
+    // TODO(thlorenz): Need to add tokens to local net?
+    chainId: ChainId.Devnet,
+  },
 ];
 
 const DEFAULT_ENDPOINT = ENDPOINTS[0];
