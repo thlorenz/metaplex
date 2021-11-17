@@ -1,0 +1,85 @@
+#!/usr/bin/env node
+
+const { execSync: exec, spawn } = require("child_process");
+const { strict: assert } = require("assert");
+const { prepareConfig } = require("./prepare-config");
+const path = require("path");
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const projectRoot = path.resolve(__dirname, "..");
+const rustDir = path.join(projectRoot, "rust");
+const localDeployDir = path.join(rustDir, "target", "deploy");
+const configPath = require.resolve("./config.yml");
+const REACT_STORE_OWNER = "2noq8fVotDZm55ZRb7upVgKSXC5E4RH2hEHcRtNpPjGM";
+
+function localDeployPath(programName) {
+  return path.join(localDeployDir, `${programName}.so`);
+}
+
+const programs = {
+  metadata: localDeployPath("metaplex_token_metadata"),
+  vault: localDeployPath("metaplex_token_vault"),
+  auction: localDeployPath("metaplex_auction"),
+  metaplex: localDeployPath("metaplex"),
+};
+
+const programIds = {
+  metadata: "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
+  vault: "vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn",
+  auction: "auctxRXPeJoc4817jDhf4HbjnhEcr1cCXenosMhK5R8",
+  metaplex: "p1exdMJcjVao65QdewkaZRUnU6VPSXhus9n2GzWfh98",
+  // NOTE: not necessary for most tests and lives in separate repo
+  // nftPacks: "packFeFNZzMfD9aVWL7QbGz1WcU7R9zpf6pvNsw2BLu",
+};
+
+async function main() {
+  console.log("+++ Preparing config");
+  prepareConfig();
+
+  try {
+    exec("pkill solana-test-validator");
+    console.log("+++ Killed currently running solana-test-validator");
+    await sleep(2000);
+  } catch (err) {}
+
+  const args = ["-C", configPath, "-r"];
+  Object.entries(programIds).forEach(([label, id]) => {
+    const programFile = programs[label];
+    args.push("--bpf-program");
+    args.push(id);
+    args.push(programFile);
+  });
+
+  const child = spawn("solana-test-validator", args, {
+    detached: true,
+    stdio: "ignore",
+  });
+  child.unref();
+
+  console.log(
+    "+++ Spawned new solana-test-validator with programs predeployed"
+  );
+
+  await sleep(2000);
+
+  const key = exec(`solana-keygen -C ${configPath} pubkey`).toString().trim();
+  console.log(`Account Pubkey is ${key}`);
+  assert.equal(
+    key,
+    REACT_STORE_OWNER,
+    "configured key should be react store owner"
+  );
+  const keypair = exec(`solana -C ${configPath} config get keypair`).toString();
+  console.log(keypair);
+
+  const account = exec(`solana -C ${configPath} account ${key}`);
+  console.log(`Account Info ${account}`);
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
