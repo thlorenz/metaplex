@@ -11,6 +11,7 @@ const projectRoot = path.resolve(__dirname, "..");
 const rustDir = path.join(projectRoot, "rust");
 const localDeployDir = path.join(rustDir, "target", "deploy");
 const configPath = require.resolve("./config.yml");
+const addressLabelsPath = require.resolve("./address-labels.yml");
 const REACT_STORE_OWNER = "2noq8fVotDZm55ZRb7upVgKSXC5E4RH2hEHcRtNpPjGM";
 
 function localDeployPath(programName) {
@@ -62,6 +63,11 @@ async function main() {
   );
 
   await sleep(2000);
+
+  console.log("+++ Importing address labels");
+  exec(
+    `solana -C ${configPath} config import-address-labels ${addressLabelsPath}`
+  );
 
   const key = exec(`solana-keygen -C ${configPath} pubkey`).toString().trim();
   console.log(`Account Pubkey is ${key}`);
