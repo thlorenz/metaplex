@@ -15,6 +15,8 @@ const addressLabelsPath = require.resolve("./config/address-labels.yml");
 
 const TEST_CREATOR = "2noq8fVotDZm55ZRb7upVgKSXC5E4RH2hEHcRtNpPjGM";
 const REACT_STORE_OWNER = "A15Y2eoMNGeX4516TYTaaMErwabCrf9AB9mrzFohdQJz";
+const CREATOR_ALICE = "GaVtHDjxYeAThQjgrLPJ88sKCm9P9KC9ixJppzCVzZJ";
+const CREATOR_BOB = "4xa5SRzvEBr5z1rd9WNNXjRx1oDfkNob1coy1hUk4kyy";
 
 function localDeployPath(programName) {
   return path.join(localDeployDir, `${programName}.so`);
@@ -100,6 +102,24 @@ async function main() {
     `solana -C ${solanaConfigPath} account ${REACT_STORE_OWNER}`
   );
   console.log(`React Store Owner Account Info ${reactStoreOwner}`);
+
+  console.log("+++ Funding the Creator Alice");
+  exec(
+    `solana transfer -C ${solanaConfigPath} --allow-unfunded-recipient ${CREATOR_ALICE} 20`
+  );
+  const creatorAlice = exec(
+    `solana -C ${solanaConfigPath} account ${CREATOR_ALICE}`
+  );
+  console.log(`Creator Alice Account Info ${creatorAlice}`);
+
+  console.log("+++ Funding the Creator Bob");
+  exec(
+    `solana transfer -C ${solanaConfigPath} --allow-unfunded-recipient ${CREATOR_BOB} 20`
+  );
+  const creatorBob = exec(
+    `solana -C ${solanaConfigPath} account ${CREATOR_BOB}`
+  );
+  console.log(`Creator Bob Account Info ${creatorBob}`);
 
   console.log("+++ Done");
   console.log(
