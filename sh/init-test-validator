@@ -12,7 +12,9 @@ const rustDir = path.join(projectRoot, "rust");
 const localDeployDir = path.join(rustDir, "target", "deploy");
 const configPath = require.resolve("./config.yml");
 const addressLabelsPath = require.resolve("./address-labels.yml");
-const REACT_STORE_OWNER = "2noq8fVotDZm55ZRb7upVgKSXC5E4RH2hEHcRtNpPjGM";
+
+const TEST_CREATOR = "2noq8fVotDZm55ZRb7upVgKSXC5E4RH2hEHcRtNpPjGM";
+const REACT_STORE_OWNER = "A15Y2eoMNGeX4516TYTaaMErwabCrf9AB9mrzFohdQJz";
 
 function localDeployPath(programName) {
   return path.join(localDeployDir, `${programName}.so`);
@@ -69,18 +71,42 @@ async function main() {
     `solana -C ${configPath} config import-address-labels ${addressLabelsPath}`
   );
 
+  // -----------------
+  // Test Creator
+  // -----------------
+
   const key = exec(`solana-keygen -C ${configPath} pubkey`).toString().trim();
   console.log(`Account Pubkey is ${key}`);
-  assert.equal(
-    key,
-    REACT_STORE_OWNER,
-    "configured key should be react store owner"
-  );
-  const keypair = exec(`solana -C ${configPath} config get keypair`).toString();
-  console.log(keypair);
+  assert.equal(key, TEST_CREATOR, "configured key should be test creator");
 
-  const account = exec(`solana -C ${configPath} account ${key}`);
-  console.log(`Account Info ${account}`);
+  const keypair = exec(`solana -C ${configPath} config get keypair`).toString();
+  console.log(`Test Creator ${keypair}`);
+
+  const testCreator = exec(`solana -C ${configPath} account ${key}`);
+  console.log(`Test Creator Account Info ${testCreator}`);
+
+  // -----------------
+  // React Store Owner
+  // -----------------
+  console.log("+++ Funding the React Store Owner");
+  exec(
+    `solana transfer -C ${configPath} --allow-unfunded-recipient ${REACT_STORE_OWNER} 2000`
+  );
+  const reactStoreOwner = exec(
+    `solana -C ${configPath} account ${REACT_STORE_OWNER}`
+  );
+  console.log(`React Store Owner Account Info ${reactStoreOwner}`);
+
+  console.log("+++ Done");
+  console.log(
+    "Add React Store Owner wallet by adding private key to Phantom Browser Extension"
+  );
+  console.log(
+    `Obtain private key via: cat ${path.relative(
+      process.cwd(),
+      require.resolve("./keypairs/react-store-owner-keypair.json")
+    )}`
+  );
 }
 
 main()
