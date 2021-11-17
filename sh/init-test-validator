@@ -2,7 +2,7 @@
 
 const { execSync: exec, spawn } = require("child_process");
 const { strict: assert } = require("assert");
-const { prepareConfig } = require("./prepare-config");
+const { prepareConfig } = require("./lib/prepare-config");
 const path = require("path");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -10,8 +10,8 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const projectRoot = path.resolve(__dirname, "..");
 const rustDir = path.join(projectRoot, "rust");
 const localDeployDir = path.join(rustDir, "target", "deploy");
-const configPath = require.resolve("./config.yml");
-const addressLabelsPath = require.resolve("./address-labels.yml");
+const solanaConfigPath = path.join(__dirname, "config", "solana-validator.yml");
+const addressLabelsPath = require.resolve("./config/address-labels.yml");
 
 const TEST_CREATOR = "2noq8fVotDZm55ZRb7upVgKSXC5E4RH2hEHcRtNpPjGM";
 const REACT_STORE_OWNER = "A15Y2eoMNGeX4516TYTaaMErwabCrf9AB9mrzFohdQJz";
@@ -46,7 +46,7 @@ async function main() {
     await sleep(2000);
   } catch (err) {}
 
-  const args = ["-C", configPath, "-r"];
+  const args = ["-C", solanaConfigPath, "-r"];
   Object.entries(programIds).forEach(([label, id]) => {
     const programFile = programs[label];
     args.push("--bpf-program");
@@ -68,21 +68,25 @@ async function main() {
 
   console.log("+++ Importing address labels");
   exec(
-    `solana -C ${configPath} config import-address-labels ${addressLabelsPath}`
+    `solana -C ${solanaConfigPath} config import-address-labels ${addressLabelsPath}`
   );
 
   // -----------------
   // Test Creator
   // -----------------
 
-  const key = exec(`solana-keygen -C ${configPath} pubkey`).toString().trim();
+  const key = exec(`solana-keygen -C ${solanaConfigPath} pubkey`)
+    .toString()
+    .trim();
   console.log(`Account Pubkey is ${key}`);
   assert.equal(key, TEST_CREATOR, "configured key should be test creator");
 
-  const keypair = exec(`solana -C ${configPath} config get keypair`).toString();
+  const keypair = exec(
+    `solana -C ${solanaConfigPath} config get keypair`
+  ).toString();
   console.log(`Test Creator ${keypair}`);
 
-  const testCreator = exec(`solana -C ${configPath} account ${key}`);
+  const testCreator = exec(`solana -C ${solanaConfigPath} account ${key}`);
   console.log(`Test Creator Account Info ${testCreator}`);
 
   // -----------------
@@ -90,10 +94,10 @@ async function main() {
   // -----------------
   console.log("+++ Funding the React Store Owner");
   exec(
-    `solana transfer -C ${configPath} --allow-unfunded-recipient ${REACT_STORE_OWNER} 2000`
+    `solana transfer -C ${solanaConfigPath} --allow-unfunded-recipient ${REACT_STORE_OWNER} 2000`
   );
   const reactStoreOwner = exec(
-    `solana -C ${configPath} account ${REACT_STORE_OWNER}`
+    `solana -C ${solanaConfigPath} account ${REACT_STORE_OWNER}`
   );
   console.log(`React Store Owner Account Info ${reactStoreOwner}`);
 
