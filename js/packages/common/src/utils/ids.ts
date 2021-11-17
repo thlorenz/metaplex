@@ -65,28 +65,43 @@ export const MEMO_ID = new PublicKey(
   'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
 );
 
-// TODO(thlorenz): These keys need to be changed during testing to whatever the program was deployed to
+const programIds = {
+  metadata: 'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s',
+  vault: 'vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn',
+  auction: 'auctxRXPeJoc4817jDhf4HbjnhEcr1cCXenosMhK5R8',
+  metaplex: 'p1exdMJcjVao65QdewkaZRUnU6VPSXhus9n2GzWfh98',
+  packCreate: 'packFeFNZzMfD9aVWL7QbGz1WcU7R9zpf6pvNsw2BLu',
+};
 
-// metaplex_token_metadata: GbB6nSkUxUnrmdRrUonfy7XwauwAgT2RdPXcp7ytrHRh
-export const METADATA_PROGRAM_ID =
-  'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s' as StringPublicKey;
+// TODO(thlorenz): Those will be either injected, loaded from local storage, via a search param or similar
+const programIdOverrides = {
+  /* metaplex_token_metadata */ metadata:
+    'GbB6nSkUxUnrmdRrUonfy7XwauwAgT2RdPXcp7ytrHRh',
+  /* metaplex_token_vault    */ vault:
+    '9ZTTaHvnjHKKkDApe5tUoEBsawuxLFuEy9WH9jNC3Pu9',
+  /* metaplex_auction        */ auction:
+    '6UB7XQgQ7Gpk3C8aHs8yaEoAUBaKpoJiHfWWoy89iQvu',
+  /* metaplex                */ metaplex:
+    '4seLVC79NDtfKJsksuoPchYPndmHYkcMbgGSybMXJkoM',
+  /* metaplex_nft_packs      */ packCreate:
+    '91kN9Rh3CYd7kBh4Q3ASR9TvEAxoz2Dg5CKCW5Tx8vNJ',
+};
 
-// metaplex_token_vault: 9ZTTaHvnjHKKkDApe5tUoEBsawuxLFuEy9WH9jNC3Pu9
-export const VAULT_ID =
-  'vau1zxA2LbssAUEF7Gpw91zMM1LvXrvpzJtmZ58rPsn' as StringPublicKey;
+const { metadata, vault, auction, metaplex, packCreate } = Object.assign(
+  {},
+  programIds,
+  programIdOverrides,
+);
 
-// metaplex_auction: 6UB7XQgQ7Gpk3C8aHs8yaEoAUBaKpoJiHfWWoy89iQvu
-export const AUCTION_ID =
-  'auctxRXPeJoc4817jDhf4HbjnhEcr1cCXenosMhK5R8' as StringPublicKey;
+export const METADATA_PROGRAM_ID = metadata as StringPublicKey;
 
-// metaplex: 4seLVC79NDtfKJsksuoPchYPndmHYkcMbgGSybMXJkoM
-export const METAPLEX_ID =
-  'p1exdMJcjVao65QdewkaZRUnU6VPSXhus9n2GzWfh98' as StringPublicKey;
+export const VAULT_ID = vault as StringPublicKey;
+
+export const AUCTION_ID = auction as StringPublicKey;
+
+export const METAPLEX_ID = metaplex as StringPublicKey;
 
 // TODO(thlorenz): Lives here for now https://github.com/metaplex/smart-contracts (where is the original?)
-// metaplex_nft_packs: 91kN9Rh3CYd7kBh4Q3ASR9TvEAxoz2Dg5CKCW5Tx8vNJ
-export const PACK_CREATE_ID = new PublicKey(
-  'packFeFNZzMfD9aVWL7QbGz1WcU7R9zpf6pvNsw2BLu',
-);
+export const PACK_CREATE_ID = new PublicKey(packCreate);
 
 export const SYSTEM = new PublicKey('11111111111111111111111111111111');
