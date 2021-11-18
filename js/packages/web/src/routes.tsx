@@ -17,6 +17,7 @@ import { AdminView } from './views/admin';
 import { PackView } from './views/pack';
 import { PackCreateView } from './views/packCreate';
 import { BillingView } from './views/auction/billing';
+import { HashQueryRoute } from '@oyster/common';
 
 export function Routes() {
   const shouldEnableNftPacks = process.env.NEXT_ENABLE_NFT_PACKS;
@@ -25,9 +26,13 @@ export function Routes() {
       <HashRouter basename={'/'}>
         <Providers>
           <Switch>
-            <Route exact path="/admin" component={() => <AdminView />} />
+            <HashQueryRoute
+              exact
+              path="/admin"
+              component={() => <AdminView />}
+            />
             {shouldEnableNftPacks && (
-              <Route
+              <HashQueryRoute
                 exact
                 path="/admin/pack/create/:stepParam?"
                 component={() => <PackCreateView />}

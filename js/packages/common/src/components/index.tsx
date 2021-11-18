@@ -12,3 +12,4 @@ export { EtherscanLink } from './EtherscanLink';
 export { MetaplexModal } from './MetaplexModal';
 export { MetaplexOverlay } from './MetaplexOverlay';
 export { HashQueryLink } from './HashQueryLink';
+export { HashQueryRoute } from './HashQueryRoute';
