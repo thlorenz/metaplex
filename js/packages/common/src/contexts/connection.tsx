@@ -36,7 +36,6 @@ export type ENDPOINT_NAME =
   | 'mainnet-beta-serum'
   | 'testnet'
   | 'devnet'
-  | 'localnet'
   | 'lending';
 
 type Endpoint = {
@@ -77,16 +76,10 @@ export const ENDPOINTS: Array<Endpoint> = [
     url: clusterApiUrl('devnet'),
     chainId: ChainId.Devnet,
   },
-  {
-    name: 'localnet',
-    label: 'localnet',
-    url: 'http://localhost:8899/',
-    // TODO(thlorenz): Need to add tokens to local net?
-    chainId: ChainId.Devnet,
-  },
 ];
 
 const DEFAULT_ENDPOINT = ENDPOINTS[0];
+const LOCALHOST = 'localhost';
 
 interface ConnectionConfig {
   connection: Connection;
@@ -106,15 +99,22 @@ export function ConnectionProvider({ children }: { children: any }) {
     useLocalStorageState<ENDPOINT_NAME>('network', DEFAULT_ENDPOINT.name);
   const networkParam = searchParams.get('network');
 
-  let maybeEndpoint;
-  if (networkParam) {
-    let endpointParam = ENDPOINTS.find(({ name }) => name === networkParam);
-    if (endpointParam) {
-      maybeEndpoint = endpointParam;
+  let maybeEndpoint: Endpoint | undefined = undefined;
+  if (networkParam != null) {
+    maybeEndpoint = ENDPOINTS.find(({ name }) => name === networkParam);
+    if (maybeEndpoint == null && networkParam === LOCALHOST) {
+      // solana-test-validator running on localhost is only used for testing and
+      // not exposed as an endpoint selector option
+      maybeEndpoint = {
+        name: LOCALHOST as ENDPOINT_NAME,
+        label: LOCALHOST,
+        url: 'http://127.0.0.1:8899/',
+        chainId: ChainId.Devnet,
+      };
     }
   }
 
-  if (networkStorage && !maybeEndpoint) {
+  if (networkStorage == null && maybeEndpoint == null) {
     let endpointStorage = ENDPOINTS.find(({ name }) => name === networkStorage);
     if (endpointStorage) {
       maybeEndpoint = endpointStorage;
