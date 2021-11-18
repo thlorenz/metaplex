@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+// #!/usr/bin/env node
 
 const { execSync: exec, spawn } = require("child_process");
 const { strict: assert } = require("assert");
@@ -14,7 +14,7 @@ const solanaConfigPath = path.join(__dirname, "config", "solana-validator.yml");
 const addressLabelsPath = require.resolve("./config/address-labels.yml");
 
 const TEST_CREATOR = "2noq8fVotDZm55ZRb7upVgKSXC5E4RH2hEHcRtNpPjGM";
-const REACT_STORE_OWNER = "A15Y2eoMNGeX4516TYTaaMErwabCrf9AB9mrzFohdQJz";
+const STORE_OWNER = "A15Y2eoMNGeX4516TYTaaMErwabCrf9AB9mrzFohdQJz";
 const CREATOR_ALICE = "GaVtHDjxYeAThQjgrLPJ88sKCm9P9KC9ixJppzCVzZJ";
 const CREATOR_BOB = "4xa5SRzvEBr5z1rd9WNNXjRx1oDfkNob1coy1hUk4kyy";
 
@@ -96,10 +96,10 @@ async function main() {
   // -----------------
   console.log("+++ Funding the React Store Owner");
   exec(
-    `solana transfer -C ${solanaConfigPath} --allow-unfunded-recipient ${REACT_STORE_OWNER} 2000`
+    `solana transfer -C ${solanaConfigPath} --allow-unfunded-recipient ${STORE_OWNER} 2000`
   );
   const reactStoreOwner = exec(
-    `solana -C ${solanaConfigPath} account ${REACT_STORE_OWNER}`
+    `solana -C ${solanaConfigPath} account ${STORE_OWNER}`
   );
   console.log(`React Store Owner Account Info ${reactStoreOwner}`);
 
@@ -123,12 +123,12 @@ async function main() {
 
   console.log("+++ Done");
   console.log(
-    "Add React Store Owner wallet by adding private key to Phantom Browser Extension"
+    "Add Store Owner wallet by adding private key to Phantom Browser Extension"
   );
   console.log(
     `Obtain private key via: cat ${path.relative(
       process.cwd(),
-      require.resolve("./keypairs/react-store-owner-keypair.json")
+      require.resolve("./keypairs/store-owner-keypair.json")
     )}`
   );
 }
